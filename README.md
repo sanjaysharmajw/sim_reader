@@ -2,7 +2,7 @@
 
 | Publisher Name | Pub Score | Pub Version |
 |:------------------:|:---------------:|:--------------:|
-| ![Permission](https://img.shields.io/pub/publisher/flutter_screenshot_blocker) | ![SIM Info](https://img.shields.io/pub/points/flutter_screenshot_blocker) | ![Network](https://img.shields.io/pub/v/flutter_screenshot_blocker) |
+| ![Permission](https://img.shields.io/pub/publisher/sim_reader) | ![SIM Info](https://img.shields.io/pub/points/sim_reader) | ![Network](https://img.shields.io/pub/v/sim_reader) |
 
 A powerful Flutter plugin for reading SIM card information including carrier name, country code, phone number, network details, and more. Supports both single and dual SIM devices across Android and iOS platforms.
 
@@ -88,7 +88,7 @@ class _SimReaderDemoState extends State<SimReaderDemo> {
     try {
       // Request permission
       PermissionStatus status = await Permission.phone.request();
-      
+
       if (!status.isGranted) {
         setState(() {
           error = 'Phone permission is required';
@@ -121,28 +121,28 @@ class _SimReaderDemoState extends State<SimReaderDemo> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : error != null
-              ? Center(child: Text('Error: $error'))
-              : ListView.builder(
-                  itemCount: simCards.length,
-                  itemBuilder: (context, index) {
-                    final sim = simCards[index];
-                    return Card(
-                      child: ListTile(
-                        leading: Icon(Icons.sim_card),
-                        title: Text(sim.carrierName ?? 'Unknown'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Country: ${sim.countryCode?.toUpperCase()}'),
-                            if (sim.phoneNumber != null)
-                              Text('Phone: ${sim.phoneNumber}'),
-                            Text('MCC/MNC: ${sim.mobileCountryCode}/${sim.mobileNetworkCode}'),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+          ? Center(child: Text('Error: $error'))
+          : ListView.builder(
+        itemCount: simCards.length,
+        itemBuilder: (context, index) {
+          final sim = simCards[index];
+          return Card(
+            child: ListTile(
+              leading: Icon(Icons.sim_card),
+              title: Text(sim.carrierName ?? 'Unknown'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Country: ${sim.countryCode?.toUpperCase()}'),
+                  if (sim.phoneNumber != null)
+                    Text('Phone: ${sim.phoneNumber}'),
+                  Text('MCC/MNC: ${sim.mobileCountryCode}/${sim.mobileNetworkCode}'),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: loadSimInfo,
         child: Icon(Icons.refresh),
@@ -160,14 +160,14 @@ Add the following permissions to your `android/app/src/main/AndroidManifest.xml`
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
+
     <!-- Required permissions -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <!-- Optional: For phone number access on Android 10+ -->
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
-    
+
     <application>
         <!-- Your app configuration -->
     </application>
@@ -177,6 +177,128 @@ Add the following permissions to your `android/app/src/main/AndroidManifest.xml`
 ### iOS Configuration
 
 No additional configuration required. The plugin uses the CoreTelephony framework which is automatically available.
+
+
+
+## 📱 iOS Permission Requirements
+
+### **Good News: No Explicit Permissions Required!**
+
+Unlike Android, iOS doesn't require explicit permissions in `Info.plist` for accessing SIM card information through the CoreTelephony framework. The SIM Reader plugin uses only public APIs that are automatically available.
+
+## 🛠️ iOS Setup Steps
+
+### 1. Info.plist Configuration (Optional but Recommended)
+
+While not required, you can add usage descriptions for better App Store review process:
+
+**File:** `ios/Runner/Info.plist`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Your existing configuration -->
+    
+    <!-- Optional: Add these for App Store transparency -->
+    <key>NSPhoneNumberUsageDescription</key>
+    <string>This app needs to access SIM card information to display carrier details and network information.</string>
+    
+    <key>NSContactsUsageDescription</key>
+    <string>This app may access SIM card information for carrier and network details.</string>
+    
+    <!-- Minimum iOS version -->
+    <key>MinimumOSVersion</key>
+    <string>9.0</string>
+    
+    <!-- Your other app configurations -->
+</dict>
+</plist>
+```
+
+### 2. No Runtime Permission Requests Needed
+
+Unlike Android, you don't need to request runtime permissions for SIM access:
+
+```dart
+// ❌ NOT NEEDED on iOS
+// await Permission.phone.request();
+
+// ✅ Direct access works on iOS
+List<SimInfo> simCards = await SimReader.getAllSimInfo();
+```
+
+### 3. iOS-Specific Implementation
+
+Here's how to handle iOS in your app:
+
+```dart
+import 'dart:io';
+import 'package:sim_reader/sim_reader.dart';
+
+class SimReaderHelper {
+  static Future<List<SimInfo>> getSimInfo() async {
+    try {
+      if (Platform.isIOS) {
+        // iOS - Direct access, no permissions needed
+        return await SimReader.getAllSimInfo();
+      } else {
+        // Android - Request permissions first
+        await Permission.phone.request();
+        return await SimReader.getAllSimInfo();
+      }
+    } catch (e) {
+      print('Error getting SIM info: $e');
+      return [];
+    }
+  }
+}
+```
+
+## 🔒 iOS Privacy and Limitations
+
+### **What Works on iOS:**
+- ✅ Carrier name
+- ✅ Country code (ISO)
+- ✅ Mobile Country Code (MCC)
+- ✅ Mobile Network Code (MNC)
+- ✅ Network operator name
+- ✅ Network type detection
+- ✅ Multiple SIM detection (iOS 12+)
+
+### **What Doesn't Work on iOS:**
+- ❌ Phone number (Apple privacy restriction)
+- ❌ SIM serial number (not available via public APIs)
+- ❌ Subscriber ID/IMSI (not available via public APIs)
+- ❌ Detailed signal strength
+
+### **iOS Versions Support:**
+- **iOS 9.0+**: Basic SIM information
+- **iOS 12.0+**: Enhanced dual SIM support
+- **iOS 14.1+**: 5G network type detection
+
+## 📋 Complete iOS Setup Example
+
+### 1. Update Info.plist
+
+```xml
+<!-- ios/Runner/Info.plist -->
+<key>CFBundleName</key>
+<string>SIM Reader Example</string>
+
+<key>CFBundleDisplayName</key>
+<string>SIM Reader</string>
+
+<!-- Optional: Usage descriptions -->
+<key>NSPhoneNumberUsageDescription</key>
+<string>Access SIM card information to display carrier and network details</string>
+
+<!-- Minimum iOS version -->
+<key>MinimumOSVersion</key>
+<string>9.0</string>
+```
+
 
 ## 📚 API Reference
 
@@ -549,4 +671,123 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ by the SIM Reader team
+Made with ❤️ by the SIM Reader team# iOS Permissions and Setup for SIM Reader
+
+## 📱 iOS Permission Requirements
+
+### **Good News: No Explicit Permissions Required!**
+
+Unlike Android, iOS doesn't require explicit permissions in `Info.plist` for accessing SIM card information through the CoreTelephony framework. The SIM Reader plugin uses only public APIs that are automatically available.
+
+## 🛠️ iOS Setup Steps
+
+### 1. Info.plist Configuration (Optional but Recommended)
+
+While not required, you can add usage descriptions for better App Store review process:
+
+**File:** `ios/Runner/Info.plist`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Your existing configuration -->
+    
+    <!-- Optional: Add these for App Store transparency -->
+    <key>NSPhoneNumberUsageDescription</key>
+    <string>This app needs to access SIM card information to display carrier details and network information.</string>
+    
+    <key>NSContactsUsageDescription</key>
+    <string>This app may access SIM card information for carrier and network details.</string>
+    
+    <!-- Minimum iOS version -->
+    <key>MinimumOSVersion</key>
+    <string>9.0</string>
+    
+    <!-- Your other app configurations -->
+</dict>
+</plist>
+```
+
+### 2. No Runtime Permission Requests Needed
+
+Unlike Android, you don't need to request runtime permissions for SIM access:
+
+```dart
+// ❌ NOT NEEDED on iOS
+// await Permission.phone.request();
+
+// ✅ Direct access works on iOS
+List<SimInfo> simCards = await SimReader.getAllSimInfo();
+```
+
+### 3. iOS-Specific Implementation
+
+Here's how to handle iOS in your app:
+
+```dart
+import 'dart:io';
+import 'package:sim_reader/sim_reader.dart';
+
+class SimReaderHelper {
+  static Future<List<SimInfo>> getSimInfo() async {
+    try {
+      if (Platform.isIOS) {
+        // iOS - Direct access, no permissions needed
+        return await SimReader.getAllSimInfo();
+      } else {
+        // Android - Request permissions first
+        await Permission.phone.request();
+        return await SimReader.getAllSimInfo();
+      }
+    } catch (e) {
+      print('Error getting SIM info: $e');
+      return [];
+    }
+  }
+}
+```
+
+## 🔒 iOS Privacy and Limitations
+
+### **What Works on iOS:**
+- ✅ Carrier name
+- ✅ Country code (ISO)
+- ✅ Mobile Country Code (MCC)
+- ✅ Mobile Network Code (MNC)
+- ✅ Network operator name
+- ✅ Network type detection
+- ✅ Multiple SIM detection (iOS 12+)
+
+### **What Doesn't Work on iOS:**
+- ❌ Phone number (Apple privacy restriction)
+- ❌ SIM serial number (not available via public APIs)
+- ❌ Subscriber ID/IMSI (not available via public APIs)
+- ❌ Detailed signal strength
+
+### **iOS Versions Support:**
+- **iOS 9.0+**: Basic SIM information
+- **iOS 12.0+**: Enhanced dual SIM support
+- **iOS 14.1+**: 5G network type detection
+
+## 📋 Complete iOS Setup Example
+
+### 1. Update Info.plist
+
+```xml
+<!-- ios/Runner/Info.plist -->
+<key>CFBundleName</key>
+<string>SIM Reader Example</string>
+
+<key>CFBundleDisplayName</key>
+<string>SIM Reader</string>
+
+<!-- Optional: Usage descriptions -->
+<key>NSPhoneNumberUsageDescription</key>
+<string>Access SIM card information to display carrier and network details</string>
+
+<!-- Minimum iOS version -->
+<key>MinimumOSVersion</key>
+<string>9.0</string>
+```

@@ -45,5 +45,15 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+        <key>NSPhoneNumberUsageDescription</key>
+        <string>This app needs to access SIM card information to display carrier details and network information.</string>
+
+        <key>NSContactsUsageDescription</key>
+        <string>This app may access SIM card information for carrier and network details.</string>
+
+        <key>MinimumOSVersion</key>
+        <string>9.0</string>
+
 </dict>
 </plist>
