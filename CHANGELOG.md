@@ -10,3 +10,7 @@
 
 * ReadMe improved
 
+* ## 1.0.4
+
+* ReadMe improved
+

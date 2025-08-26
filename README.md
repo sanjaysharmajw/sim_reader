@@ -2,12 +2,12 @@
 
 
 # SIM Reader 📱
-
-| Publisher Name | Pub Score | Pub Version |
-|:------------------:|:---------------:|:--------------:|
-| ![Permission](https://img.shields.io/pub/publisher/sim_reader) | ![SIM Info](https://img.shields.io/pub/points/sim_reader) | ![Network](https://img.shields.io/pub/v/sim_reader) |
-
 A powerful Flutter plugin for reading SIM card information including carrier name, country code, phone number, network details, and more. Supports both single and dual SIM devices across Android and iOS platforms
+
+| ![Publisher](https://img.shields.io/pub/publisher/sim_reader) | ![Points](https://img.shields.io/pub/points/sim_reader) | ![Version](https://img.shields.io/pub/v/sim_reader) |
+|:------------------------------------------------------------:|:-----------------------------------------------------:|:--------------------------------------------------:|
+
+
 ## ✨ Features
 
 - 📋 **Comprehensive SIM Information**: Carrier name, country code, MCC/MNC, phone number
@@ -17,8 +17,6 @@ A powerful Flutter plugin for reading SIM card information including carrier nam
 - 🚀 **Cross Platform**: Works on both Android and iOS
 - ⚡ **Easy Integration**: Simple API with comprehensive error handling
 - 🛡️ **Privacy Focused**: Respects platform limitations and user privacy
-
-
 
 
 
@@ -90,7 +88,7 @@ class _SimReaderDemoState extends State<SimReaderDemo> {
     try {
       // Request permission
       PermissionStatus status = await Permission.phone.request();
-      
+
       if (!status.isGranted) {
         setState(() {
           error = 'Phone permission is required';
@@ -123,28 +121,28 @@ class _SimReaderDemoState extends State<SimReaderDemo> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : error != null
-              ? Center(child: Text('Error: $error'))
-              : ListView.builder(
-                  itemCount: simCards.length,
-                  itemBuilder: (context, index) {
-                    final sim = simCards[index];
-                    return Card(
-                      child: ListTile(
-                        leading: Icon(Icons.sim_card),
-                        title: Text(sim.carrierName ?? 'Unknown'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Country: ${sim.countryCode?.toUpperCase()}'),
-                            if (sim.phoneNumber != null)
-                              Text('Phone: ${sim.phoneNumber}'),
-                            Text('MCC/MNC: ${sim.mobileCountryCode}/${sim.mobileNetworkCode}'),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+          ? Center(child: Text('Error: $error'))
+          : ListView.builder(
+        itemCount: simCards.length,
+        itemBuilder: (context, index) {
+          final sim = simCards[index];
+          return Card(
+            child: ListTile(
+              leading: Icon(Icons.sim_card),
+              title: Text(sim.carrierName ?? 'Unknown'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Country: ${sim.countryCode?.toUpperCase()}'),
+                  if (sim.phoneNumber != null)
+                    Text('Phone: ${sim.phoneNumber}'),
+                  Text('MCC/MNC: ${sim.mobileCountryCode}/${sim.mobileNetworkCode}'),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: loadSimInfo,
         child: Icon(Icons.refresh),
@@ -162,14 +160,14 @@ Add the following permissions to your `android/app/src/main/AndroidManifest.xml`
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
+
     <!-- Required permissions -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <!-- Optional: For phone number access on Android 10+ -->
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
-    
+
     <application>
         <!-- Your app configuration -->
     </application>
@@ -200,22 +198,22 @@ While not required, you can add usage descriptions for better App Store review p
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-    <!-- Your existing configuration -->
-    
-    <!-- Optional: Add these for App Store transparency -->
-    <key>NSPhoneNumberUsageDescription</key>
-    <string>This app needs to access SIM card information to display carrier details and network information.</string>
-    
-    <key>NSContactsUsageDescription</key>
-    <string>This app may access SIM card information for carrier and network details.</string>
-    
-    <!-- Minimum iOS version -->
-    <key>MinimumOSVersion</key>
-    <string>9.0</string>
-    
-    <!-- Your other app configurations -->
-</dict>
+    <dict>
+        <!-- Your existing configuration -->
+
+        <!-- Optional: Add these for App Store transparency -->
+        <key>NSPhoneNumberUsageDescription</key>
+        <string>This app needs to access SIM card information to display carrier details and network information.</string>
+
+        <key>NSContactsUsageDescription</key>
+        <string>This app may access SIM card information for carrier and network details.</string>
+
+        <!-- Minimum iOS version -->
+        <key>MinimumOSVersion</key>
+        <string>9.0</string>
+
+        <!-- Your other app configurations -->
+    </dict>
 </plist>
 ```
 
@@ -292,11 +290,11 @@ class SimReaderHelper {
 <key>CFBundleDisplayName</key>
 <string>SIM Reader</string>
 
-<!-- Optional: Usage descriptions -->
+    <!-- Optional: Usage descriptions -->
 <key>NSPhoneNumberUsageDescription</key>
 <string>Access SIM card information to display carrier and network details</string>
 
-<!-- Minimum iOS version -->
+    <!-- Minimum iOS version -->
 <key>MinimumOSVersion</key>
 <string>9.0</string>
 ```
@@ -339,12 +337,12 @@ class SimInfo {
 SimInfo? simInfo = await SimReader.getSimInfo();
 
 if (simInfo != null) {
-  print('Carrier: ${simInfo.carrierName}');
-  print('Country: ${simInfo.countryCode}');
-  print('Phone: ${simInfo.phoneNumber}');
-  print('MCC: ${simInfo.mobileCountryCode}');
-  print('MNC: ${simInfo.mobileNetworkCode}');
-  print('Roaming: ${simInfo.isNetworkRoaming}');
+print('Carrier: ${simInfo.carrierName}');
+print('Country: ${simInfo.countryCode}');
+print('Phone: ${simInfo.phoneNumber}');
+print('MCC: ${simInfo.mobileCountryCode}');
+print('MNC: ${simInfo.mobileNetworkCode}');
+print('Roaming: ${simInfo.isNetworkRoaming}');
 }
 ```
 
@@ -368,9 +366,9 @@ class NetworkInfo {
 NetworkInfo? networkInfo = await SimReader.getNetworkInfo();
 
 if (networkInfo != null) {
-  print('Operator: ${networkInfo.networkOperatorName}');
-  print('Type: ${networkInfo.networkType}');
-  print('Available: ${networkInfo.isNetworkAvailable}');
+print('Operator: ${networkInfo.networkOperatorName}');
+print('Type: ${networkInfo.networkType}');
+print('Available: ${networkInfo.isNetworkAvailable}');
 }
 ```
 
@@ -380,11 +378,11 @@ Custom exception for SIM Reader specific errors:
 
 ```dart
 try {
-  final simInfo = await SimReader.getSimInfo();
+final simInfo = await SimReader.getSimInfo();
 } on SimReaderException catch (e) {
-  print('SIM Reader Error: ${e.message}');
+print('SIM Reader Error: ${e.message}');
 } catch (e) {
-  print('General Error: $e');
+print('General Error: $e');
 }
 ```
 
@@ -397,26 +395,26 @@ import 'package:permission_handler/permission_handler.dart';
 
 Future<bool> requestSimPermissions() async {
   PermissionStatus status = await Permission.phone.status;
-  
+
   if (status.isDenied) {
     status = await Permission.phone.request();
   }
-  
+
   if (status.isPermanentlyDenied) {
     // Open app settings
     await openAppSettings();
     return false;
   }
-  
+
   return status.isGranted;
 }
 
 // Usage
 if (await requestSimPermissions()) {
-  final simInfo = await SimReader.getAllSimInfo();
-  // Handle SIM information
+final simInfo = await SimReader.getAllSimInfo();
+// Handle SIM information
 } else {
-  // Handle permission denied
+// Handle permission denied
 }
 ```
 
@@ -425,7 +423,7 @@ if (await requestSimPermissions()) {
 ```dart
 Future<void> checkPermissionStatus() async {
   PermissionStatus status = await Permission.phone.status;
-  
+
   switch (status) {
     case PermissionStatus.granted:
       print('Permission granted');
@@ -472,10 +470,10 @@ Future<void> checkPermissionStatus() async {
 ```dart
 Future<void> handleDualSim() async {
   List<SimInfo> allSims = await SimReader.getAllSimInfo();
-  
+
   if (allSims.length > 1) {
     print('Device has dual SIM');
-    
+
     for (int i = 0; i < allSims.length; i++) {
       SimInfo sim = allSims[i];
       print('SIM ${i + 1}:');
@@ -496,10 +494,10 @@ Future<void> handleDualSim() async {
 ```dart
 Future<void> checkNetworkType() async {
   NetworkInfo? networkInfo = await SimReader.getNetworkInfo();
-  
+
   if (networkInfo != null) {
     String networkType = networkInfo.networkType ?? 'Unknown';
-    
+
     switch (networkType.toUpperCase()) {
       case 'LTE':
       case '4G':
@@ -539,21 +537,21 @@ class SimReaderHelper {
       if (!await Permission.phone.isGranted) {
         throw SimReaderException('Permission not granted');
       }
-      
+
       // Check if SIM card exists
       if (!await SimReader.hasSimCard()) {
         throw SimReaderException('No SIM card found');
       }
-      
+
       // Get SIM information
       List<SimInfo> simCards = await SimReader.getAllSimInfo();
-      
+
       if (simCards.isEmpty) {
         throw SimReaderException('SIM information not available');
       }
-      
+
       return simCards;
-      
+
     } on SimReaderException catch (e) {
       print('SIM Reader specific error: ${e.message}');
       rethrow;
@@ -589,43 +587,43 @@ class SimReaderHelper {
 ```dart
 Future<void> debugSimReader() async {
   print('=== SIM Reader Debug ===');
-  
+
   try {
     // Permission check
     bool hasPermission = await Permission.phone.isGranted;
     print('Permission granted: $hasPermission');
-    
+
     if (!hasPermission) {
       print('Requesting permission...');
       PermissionStatus status = await Permission.phone.request();
       print('Permission status: $status');
     }
-    
+
     // SIM card check
     bool hasSim = await SimReader.hasSimCard();
     print('Has SIM card: $hasSim');
-    
+
     if (hasSim) {
       // Get all SIM info
       List<SimInfo> sims = await SimReader.getAllSimInfo();
       print('SIM count: ${sims.length}');
-      
+
       for (int i = 0; i < sims.length; i++) {
         SimInfo sim = sims[i];
         print('SIM $i: ${sim.carrierName} (${sim.countryCode})');
       }
-      
+
       // Network info
       NetworkInfo? network = await SimReader.getNetworkInfo();
       if (network != null) {
         print('Network: ${network.networkOperatorName} (${network.networkType})');
       }
     }
-    
+
   } catch (e) {
     print('Debug error: $e');
   }
-  
+
   print('=== Debug Complete ===');
 }
 ```
