@@ -7,17 +7,13 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SIM Reader Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
       home: SimReaderExample(),
       debugShowCheckedModeBanner: false,
     );
@@ -32,7 +28,6 @@ class SimReaderExample extends StatefulWidget {
 }
 
 class _SimReaderExampleState extends State<SimReaderExample> {
-
   List<SimInfo> simCards = [];
   NetworkInfo? networkInfo;
   bool hasSimCard = false;
@@ -68,7 +63,8 @@ class _SimReaderExampleState extends State<SimReaderExample> {
         await loadSimInfo();
       } else if (status.isPermanentlyDenied) {
         setState(() {
-          error = 'Phone permission is permanently denied. Please enable it in app settings.';
+          error =
+              'Phone permission is permanently denied. Please enable it in app settings.';
           isLoading = false;
         });
       } else {
@@ -263,7 +259,49 @@ class _SimReaderExampleState extends State<SimReaderExample> {
                   ),
                 )
               else if (permissionGranted) ...[
-                  // Device SIM Status
+                // Device SIM Status
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Device Status',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Icon(
+                              hasSimCard
+                                  ? Icons.sim_card
+                                  : Icons.sim_card_outlined,
+                              color: hasSimCard ? Colors.green : Colors.grey,
+                              size: 24,
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              hasSimCard ? 'SIM Card Present' : 'No SIM Card',
+                              style: TextStyle(
+                                color: hasSimCard ? Colors.green : Colors.grey,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Network Information
+                if (networkInfo != null) ...[
+                  SizedBox(height: 16),
                   Card(
                     child: Padding(
                       padding: EdgeInsets.all(16),
@@ -271,240 +309,193 @@ class _SimReaderExampleState extends State<SimReaderExample> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Device Status',
+                            'Network Information',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Icon(
-                                hasSimCard
-                                    ? Icons.sim_card
-                                    : Icons.sim_card_outlined,
-                                color: hasSimCard ? Colors.green : Colors.grey,
-                                size: 24,
-                              ),
-                              SizedBox(width: 12),
-                              Text(
-                                hasSimCard
-                                    ? 'SIM Card Present'
-                                    : 'No SIM Card',
-                                style: TextStyle(
-                                  color: hasSimCard ? Colors.green : Colors.grey,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
+                          _buildInfoRow(
+                            'Operator',
+                            networkInfo!.networkOperatorName ?? 'Unknown',
+                          ),
+                          _buildInfoRow(
+                            'Network Type',
+                            networkInfo!.networkType ?? 'Unknown',
+                          ),
+                          _buildInfoRow(
+                            'Network Available',
+                            networkInfo!.isNetworkAvailable ? 'Yes' : 'No',
                           ),
                         ],
                       ),
                     ),
                   ),
+                ],
 
-                  // Network Information
-                  if (networkInfo != null) ...[
-                    SizedBox(height: 16),
-                    Card(
+                // SIM Cards Information
+                if (simCards.isNotEmpty) ...[
+                  SizedBox(height: 16),
+                  Text(
+                    'SIM Cards (${simCards.length})',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  ...simCards.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final simInfo = entry.value;
+
+                    return Card(
+                      margin: EdgeInsets.only(bottom: 12),
                       child: Padding(
                         padding: EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Network Information',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Row(
+                              children: [
+                                Icon(Icons.sim_card, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text(
+                                  'SIM ${index + 1}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (simInfo.simSlotIndex != null)
+                                  Text(
+                                    ' (Slot ${simInfo.simSlotIndex})',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            Divider(height: 24),
+                            _buildInfoRow(
+                              'Carrier',
+                              simInfo.carrierName ?? 'Unknown',
+                            ),
+                            _buildInfoRow(
+                              'Country',
+                              simInfo.countryCode?.toUpperCase() ?? 'Unknown',
+                            ),
+                            _buildInfoRow(
+                              'Phone Number',
+                              simInfo.phoneNumber ?? 'Not available',
+                            ),
+                            _buildInfoRow(
+                              'MCC',
+                              simInfo.mobileCountryCode ?? 'Unknown',
+                            ),
+                            _buildInfoRow(
+                              'MNC',
+                              simInfo.mobileNetworkCode ?? 'Unknown',
+                            ),
+                            if (simInfo.simSerialNumber != null)
+                              _buildInfoRow(
+                                'Serial Number',
+                                simInfo.simSerialNumber!,
                               ),
-                            ),
-                            SizedBox(height: 12),
+                            if (simInfo.subscriberId != null)
+                              _buildInfoRow(
+                                'Subscriber ID',
+                                _maskSubscriberId(simInfo.subscriberId!),
+                              ),
                             _buildInfoRow(
-                                'Operator',
-                                networkInfo!.networkOperatorName ?? 'Unknown'
-                            ),
-                            _buildInfoRow(
-                                'Network Type',
-                                networkInfo!.networkType ?? 'Unknown'
-                            ),
-                            _buildInfoRow(
-                                'Network Available',
-                                networkInfo!.isNetworkAvailable ? 'Yes' : 'No'
+                              'Roaming',
+                              simInfo.isNetworkRoaming ? 'Yes' : 'No',
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-
-                  // SIM Cards Information
-                  if (simCards.isNotEmpty) ...[
-                    SizedBox(height: 16),
-                    Text(
-                      'SIM Cards (${simCards.length})',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    ...simCards.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final simInfo = entry.value;
-
-                      return Card(
-                        margin: EdgeInsets.only(bottom: 12),
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    );
+                  }).toList(),
+                ] else if (!isLoading && hasSimCard) ...[
+                  SizedBox(height: 16),
+                  Card(
+                    color: Colors.orange.shade50,
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.sim_card, color: Colors.blue),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'SIM ${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  if (simInfo.simSlotIndex != null)
-                                    Text(
-                                      ' (Slot ${simInfo.simSlotIndex})',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                ],
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.orange.shade700,
                               ),
-                              Divider(height: 24),
-                              _buildInfoRow(
-                                  'Carrier',
-                                  simInfo.carrierName ?? 'Unknown'
-                              ),
-                              _buildInfoRow(
-                                  'Country',
-                                  simInfo.countryCode?.toUpperCase() ?? 'Unknown'
-                              ),
-                              _buildInfoRow(
-                                  'Phone Number',
-                                  simInfo.phoneNumber ?? 'Not available'
-                              ),
-                              _buildInfoRow(
-                                  'MCC',
-                                  simInfo.mobileCountryCode ?? 'Unknown'
-                              ),
-                              _buildInfoRow(
-                                  'MNC',
-                                  simInfo.mobileNetworkCode ?? 'Unknown'
-                              ),
-                              if (simInfo.simSerialNumber != null)
-                                _buildInfoRow(
-                                    'Serial Number',
-                                    simInfo.simSerialNumber!
+                              SizedBox(width: 8),
+                              Text(
+                                'No SIM Information Available',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade700,
                                 ),
-                              if (simInfo.subscriberId != null)
-                                _buildInfoRow(
-                                    'Subscriber ID',
-                                    _maskSubscriberId(simInfo.subscriberId!)
-                                ),
-                              _buildInfoRow(
-                                  'Roaming',
-                                  simInfo.isNetworkRoaming ? 'Yes' : 'No'
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ] else if (!isLoading && hasSimCard) ...[
-                    SizedBox(height: 16),
-                    Card(
-                      color: Colors.orange.shade50,
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                    Icons.info_outline,
-                                    color: Colors.orange.shade700
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  'No SIM Information Available',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.orange.shade700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'SIM card detected but information could not be retrieved. This may be due to device restrictions or carrier limitations.',
-                              style: TextStyle(color: Colors.orange.shade600),
-                            ),
-                          ],
-                        ),
+                          SizedBox(height: 8),
+                          Text(
+                            'SIM card detected but information could not be retrieved. This may be due to device restrictions or carrier limitations.',
+                            style: TextStyle(color: Colors.orange.shade600),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-
-                  // iOS Limitations Notice
-                  if (Theme.of(context).platform == TargetPlatform.iOS) ...[
-                    SizedBox(height: 16),
-                    Card(
-                      color: Colors.blue.shade50,
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.info, color: Colors.blue.shade700),
-                                SizedBox(width: 8),
-                                Text(
-                                  'iOS Limitations',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue.shade700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'On iOS, phone numbers, SIM serial numbers, and subscriber IDs are not available due to Apple\'s privacy restrictions.',
-                              style: TextStyle(color: Colors.blue.shade600),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ],
+
+                // iOS Limitations Notice
+                if (Theme.of(context).platform == TargetPlatform.iOS) ...[
+                  SizedBox(height: 16),
+                  Card(
+                    color: Colors.blue.shade50,
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.info, color: Colors.blue.shade700),
+                              SizedBox(width: 8),
+                              Text(
+                                'iOS Limitations',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'On iOS, phone numbers, SIM serial numbers, and subscriber IDs are not available due to Apple\'s privacy restrictions.',
+                            style: TextStyle(color: Colors.blue.shade600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ],
           ),
         ),
       ),
       floatingActionButton: permissionGranted
           ? FloatingActionButton(
-        onPressed: loadSimInfo,
-        tooltip: 'Refresh SIM Information',
-        child: Icon(Icons.refresh),
-      )
+              onPressed: loadSimInfo,
+              tooltip: 'Refresh SIM Information',
+              child: Icon(Icons.refresh),
+            )
           : null,
     );
   }
@@ -526,12 +517,7 @@ class _SimReaderExampleState extends State<SimReaderExample> {
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            child: Text(value, style: TextStyle(fontWeight: FontWeight.w400)),
           ),
         ],
       ),
@@ -545,4 +531,3 @@ class _SimReaderExampleState extends State<SimReaderExample> {
         subscriberId.substring(subscriberId.length - 3);
   }
 }
-

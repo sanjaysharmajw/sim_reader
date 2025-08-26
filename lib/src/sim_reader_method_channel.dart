@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-
-import 'sim_reader_platform_interface.dart';
 import '../sim_reader.dart';
 
 /// An implementation of [] that uses method channels.
@@ -13,7 +11,9 @@ class MethodChannelSimReader extends SimReaderPlatform {
   @override
   Future<SimInfo?> getSimInfo() async {
     try {
-      final result = await methodChannel.invokeMethod<Map<Object?, Object?>>('getSimInfo');
+      final result = await methodChannel.invokeMethod<Map<Object?, Object?>>(
+        'getSimInfo',
+      );
       if (result == null) return null;
       return SimInfo.fromMap(Map<String, dynamic>.from(result));
     } on PlatformException catch (e) {
@@ -24,7 +24,9 @@ class MethodChannelSimReader extends SimReaderPlatform {
   @override
   Future<List<SimInfo>> getAllSimInfo() async {
     try {
-      final result = await methodChannel.invokeMethod<List<Object?>>('getAllSimInfo');
+      final result = await methodChannel.invokeMethod<List<Object?>>(
+        'getAllSimInfo',
+      );
       if (result == null) return [];
 
       return result
@@ -49,7 +51,9 @@ class MethodChannelSimReader extends SimReaderPlatform {
   @override
   Future<NetworkInfo?> getNetworkInfo() async {
     try {
-      final result = await methodChannel.invokeMethod<Map<Object?, Object?>>('getNetworkInfo');
+      final result = await methodChannel.invokeMethod<Map<Object?, Object?>>(
+        'getNetworkInfo',
+      );
       if (result == null) return null;
       return NetworkInfo.fromMap(Map<String, dynamic>.from(result));
     } on PlatformException catch (e) {

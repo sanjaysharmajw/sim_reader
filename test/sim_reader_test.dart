@@ -6,7 +6,6 @@ import 'package:sim_reader/src/sim_reader_method_channel.dart';
 class MockSimReaderPlatform
     with MockPlatformInterfaceMixin
     implements SimReaderPlatform {
-
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 
