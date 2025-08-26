@@ -1,7 +1,8 @@
 name: sim_reader
-description: "A new Flutter plugin project."
-version: 0.0.1
-homepage:
+description: "A powerful Flutter plugin for reading SIM card information including carrier name, country code, phone number, network details, and more. Supports both single and dual SIM devices across Android and iOS platforms.
+"
+version: 1.0.1
+homepage: https://github.com/sanjaysharmajw/sim_reader.git
 
 environment:
   sdk: ^3.8.1
