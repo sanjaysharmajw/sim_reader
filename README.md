@@ -19,7 +19,6 @@ A powerful Flutter plugin for reading SIM card information including carrier nam
 - 🛡️ **Privacy Focused**: Respects platform limitations and user privacy
 
 
-
 ## 🚀 Quick Start
 
 ### Installation
