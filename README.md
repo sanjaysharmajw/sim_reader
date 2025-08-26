@@ -1,3 +1,6 @@
+![Logo](https://github.com/sanjaysharmajw/sim_reader/blob/main/screenshots/banner.png?raw=true)
+
+
 # SIM Reader 📱
 
 | Publisher Name | Pub Score | Pub Version |
@@ -88,7 +91,7 @@ class _SimReaderDemoState extends State<SimReaderDemo> {
     try {
       // Request permission
       PermissionStatus status = await Permission.phone.request();
-
+      
       if (!status.isGranted) {
         setState(() {
           error = 'Phone permission is required';
@@ -121,28 +124,28 @@ class _SimReaderDemoState extends State<SimReaderDemo> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : error != null
-          ? Center(child: Text('Error: $error'))
-          : ListView.builder(
-        itemCount: simCards.length,
-        itemBuilder: (context, index) {
-          final sim = simCards[index];
-          return Card(
-            child: ListTile(
-              leading: Icon(Icons.sim_card),
-              title: Text(sim.carrierName ?? 'Unknown'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Country: ${sim.countryCode?.toUpperCase()}'),
-                  if (sim.phoneNumber != null)
-                    Text('Phone: ${sim.phoneNumber}'),
-                  Text('MCC/MNC: ${sim.mobileCountryCode}/${sim.mobileNetworkCode}'),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+              ? Center(child: Text('Error: $error'))
+              : ListView.builder(
+                  itemCount: simCards.length,
+                  itemBuilder: (context, index) {
+                    final sim = simCards[index];
+                    return Card(
+                      child: ListTile(
+                        leading: Icon(Icons.sim_card),
+                        title: Text(sim.carrierName ?? 'Unknown'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Country: ${sim.countryCode?.toUpperCase()}'),
+                            if (sim.phoneNumber != null)
+                              Text('Phone: ${sim.phoneNumber}'),
+                            Text('MCC/MNC: ${sim.mobileCountryCode}/${sim.mobileNetworkCode}'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
       floatingActionButton: FloatingActionButton(
         onPressed: loadSimInfo,
         child: Icon(Icons.refresh),
@@ -160,14 +163,14 @@ Add the following permissions to your `android/app/src/main/AndroidManifest.xml`
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+    
     <!-- Required permissions -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    
     <!-- Optional: For phone number access on Android 10+ -->
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
-
+    
     <application>
         <!-- Your app configuration -->
     </application>
@@ -182,11 +185,11 @@ No additional configuration required. The plugin uses the CoreTelephony framewor
 
 ## 📱 iOS Permission Requirements
 
-### **Good News: No Explicit Permissions Required!**
+### Good News: No Explicit Permissions Required!
 
 Unlike Android, iOS doesn't require explicit permissions in `Info.plist` for accessing SIM card information through the CoreTelephony framework. The SIM Reader plugin uses only public APIs that are automatically available.
 
-## 🛠️ iOS Setup Steps
+## 🛠️ iOS Setup Steps (If needed, please use it. And if the SIM is not being detected, you can try using it.)
 
 ### 1. Info.plist Configuration (Optional but Recommended)
 
