@@ -7,8 +7,7 @@
 |:------------------:|:---------------:|:--------------:|
 | ![Permission](https://img.shields.io/pub/publisher/sim_reader) | ![SIM Info](https://img.shields.io/pub/points/sim_reader) | ![Network](https://img.shields.io/pub/v/sim_reader) |
 
-A Flutter plugin to read SIM card details like carrier, country code, phone number, and network info. Works on single & dual SIM devices for Android and iOS.
-
+A powerful Flutter plugin for reading SIM card information including carrier name, country code, phone number, network details, and more. Supports both single and dual SIM devices across Android and iOS platforms
 ## ✨ Features
 
 - 📋 **Comprehensive SIM Information**: Carrier name, country code, MCC/MNC, phone number
