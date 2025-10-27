@@ -105,7 +105,7 @@ class SimReaderPlugin: FlutterPlugin, MethodCallHandler {
       val networkInfo = mapOf(
         "networkOperatorName" to telephonyManager.networkOperatorName,
         "networkOperator" to telephonyManager.networkOperator,
-        "networkType" to getNetworkTypeName(telephonyManager.networkType, telephonyManager.overrideNetworkType),
+        "networkType" to getNetworkTypeName(telephonyManager.networkType),
         "isNetworkAvailable" to (telephonyManager.networkOperator.isNotEmpty()),
         "signalStrength" to null // Would require additional listener setup
       )
@@ -185,9 +185,7 @@ class SimReaderPlugin: FlutterPlugin, MethodCallHandler {
     return if (simOperator != null && simOperator.length > 3) simOperator.substring(3) else null
   }
 
-  private fun getNetworkTypeName(networkType: Int, overrideNetworkType: Int): String {
-
-    if(overrideNetworkType == TelephonyManager.OVERRIDE_NETWORK_TYPE)
+  private fun getNetworkTypeName(networkType: Int): String {
     return when (networkType) {
       TelephonyManager.NETWORK_TYPE_GPRS -> "GPRS"
       TelephonyManager.NETWORK_TYPE_EDGE -> "EDGE"
@@ -200,15 +198,8 @@ class SimReaderPlugin: FlutterPlugin, MethodCallHandler {
       TelephonyManager.NETWORK_TYPE_EVDO_A -> "EVDO_A"
       TelephonyManager.NETWORK_TYPE_EVDO_B -> "EVDO_B"
       TelephonyManager.NETWORK_TYPE_1xRTT -> "1xRTT"
-      TelephonyManager.NETWORK_TYPE_IDEN -> "IDEN",
-      TelephonyManager.NETWORK_TYPE_NR -> "NR",
-      TelephonyManager.NETWORK_TYPE_LTE -> {
-        if(overrideNetworkType == TelephonyManager.OVERRIDE_NETWORK_TYPE_NR_NSA)
-        {
-          return "5G"
-        }
-        return "LTE"
-      },
+      TelephonyManager.NETWORK_TYPE_IDEN -> "IDEN"
+      TelephonyManager.NETWORK_TYPE_LTE -> "LTE"
       TelephonyManager.NETWORK_TYPE_EHRPD -> "EHRPD"
       TelephonyManager.NETWORK_TYPE_HSPAP -> "HSPAP"
       else -> "UNKNOWN"
